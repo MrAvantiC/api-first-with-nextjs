@@ -1,49 +1,406 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reset.css">
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+    <title>reveal.js</title>
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/monokai.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/simple.css">
+    <link rel="stylesheet" href="css/custom.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css">
 
-		<script src="js/reveal.js"></script>
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true }
-				]
-			});
-		</script>
-	</body>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1 class="presentation-title">Replacing a legacy Frontend <br>with Next.js <br>and <br>an API-first Workflow</h1>
+
+                <aside class="notes">
+                    <ul>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>About Me</h1>
+
+                <div class="about-me">
+                    <span>Hi, I'm René! :)</span>
+                    <span class="fragment">Web Developer</span>
+                    <span class="fragment">marmalade Group</span>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Architecture</h1>
+
+                <div class="architecture-wrapper">
+                    <img class="fragment" src="./graphics/architecture_old_fragment_1.svg" alt="">
+                    <img class="fragment" src="./graphics/architecture_old_fragment_2.svg" alt="">
+                    <img class="fragment" src="./graphics/architecture_old_fragment_3.svg" alt="">
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>we have a shop system - in our case it's called "OXID" that handles </li>
+                        <li>for reasons of reliability and scalability, the shop is replicated on a couple of application servers...</li>
+                        <li>...and a load balancer distributes the incoming traffic to those servers</li>
+                        <li>initially, the shop took care of everything, presentation of product lists, product detail pages, displaying search results and of course the checkout</li>
+                        <li>Now, OXID itself has a very naive implementation when it comes to searching across your products...</li>
+                        <li>...it also does not offer any way to filter search results or products lists by default...</li>
+                        <li>...so, this is how our product development came to life.</li>
+                        <li>With Makaira, we import the product data into an ElasticSearch</li>
+                        <li>Not only does this offer a nice performance event at a point where searching becomes slow and inefficient on a relational database like MySQL...</li>
+                        <li>...but it also allows us to implement further functionalities like, analyizing and steming our data, fuzzy searching or filtering products based on given criteries more or less quite easily. ;)</li>
+                        <li>Therefore, Makaira adds an additonal layer of to our architecture with ElasticSearch backing all the search and filter functionalities</li>
+                        <li>So, after have done all this, we were thinking "since we had to import all the product and category data of the shop system anyway, what else can we do use that for?"</li>
+                        <li>j</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>"Headless"</h1>
+
+                <ul>
+                    <li class="fragment">Decouple the Storefront from the Backend</li>
+                    <li class="fragment">Presentation of products in a separate Frontend application</li>
+                    <li class="fragment">State Management still in the Backend</li>
+                </ul>
+
+                <aside class="notes">
+                    <ul>
+                        <li>in the past couple of years there has been more and more talk about the term "Headless"</li>
+                        <li>as to my experience, in the beginning when people were talking about "headless" it was mostly related to content management systems</li>
+                        <li>now, with all the data that we need to present the products of a shop, we decided to replace the frontend that OXID with a decoupled application</li>
+                        <li>this application gets its data directly out of ElasticSearch and only uses to the shop system for state managemt</li>
+                        <li>What do I mean by state management?</li>
+                        <li>= mainly basket and login states </li>
+                        <li>So, we started replacing the legacy shop by implementing a frontend application with Next.js</li>
+                        <li>Since the goal is that this concept should be applicable to any kind of shop, not just this one customer, we wanted to implement the new frontend with an "API-first approach"</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>What does "API-first workflow" even mean?</h1>
+            </section>
+
+            <section>
+                <h1>API-first - In Theory</h1>
+                <ul style="min-height: 270px">
+                    <li class="fragment">Frontend has no knowledge about URL structures</li>
+                    <li class="fragment">API provides information related to a given URL</li>
+                    <li class="fragment">Frontend decides what kind of page to render based on the API response</li>
+                </ul>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Frontend application has no knowledge about the URL structure</li>
+                        <li>API provides all the information related to a given URL</li>
+                        <li>based on that information the Frontend decides what kind of page to render</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>API-first - In Pratice</h1>
+
+                <div class="api-first-wrapper">
+                    <img class="fragment" src="./graphics/api_first_success.svg" alt="">
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Unknown URLs</h1>
+
+                <div class="api-first-wrapper">
+                    <img class="fragment" src="./graphics/api_first_failure.svg" alt="">
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>The Migration Process</h1>
+
+                <ul>
+                    <li>Failover functionality in Load Balancer</li>
+                    <li>Traffic gets routed against the Next.js server first</li>
+                    <li>If Next.js returns a non-200 status code, the load balancer falls back to the legacy system</li>
+                    <li>Enables page-by-page or type-by-type migration to the new frontend application</li>
+                </ul>
+
+                <aside class="notes">
+                    <ul>
+                        <li>The failover mechanism allowed us to go live with only a handful of pages at first</li>
+                        <li>We could just filter the API-response and only display selected pages by simply returning a 404 in the Next.js application if a given URL was not whitelisted</li>
+                        <li>This allowed us to monitor aspects like performance or SEO-impact in a more limited scope than compared to switching the whole system at first</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>URL-driven</h1>
+                <ul>
+                    <li class="fragment">Application State (filtering, sorting, ...) is derived from Query Parameters</li>
+                    <li class="fragment">"Request Builder" generates API requests based on the Context</li>
+                    <li class="fragment">Event handlers collect Form data and use it to generate new Query Parameters</li>
+                    <li class="fragment">Navigate to the new URL (internally) generate the API request and fetch the data</li>
+                </ul>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Intro: "URL-driven" is not a new concept at all, but one that get's sometimes overlooked in the age of single page applications</li>
+                        <li>On every request we go through the same lifecycle...</li>
+                        <li>...the request builder generates an API request based on the context that...</li>
+                        <li>...Next.js provides to each request -> contains - among other things - the query parameters for a given request</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Implementation in Next.js</h1>
+            </section>
+
+            <section>
+                <h1>One Route to rule them all</h1>
+
+                <img class="fragment" src="./graphics/express_route.svg" alt="" style="display: block; margin: 0 auto;">
+
+                <aside class="notes">
+                    <ul>
+                        <li>Server side only!</li>
+                        <li>Next.js offers file-based routing where your directory structure represents your available routes</li>
+                        <li>But: you can also configure a custom routing...</li>
+                        <li>...on the server-side Next.js uses an Express server which you can use for your route definitions</li>
+                        <li>In our case: that boils down to one route...</li>
+                        <li>...the reason is that since the frontend has no knowledge about the url structure of the application, we can get a away with this kind of "catch all" route</li>
+                        <li>the route definition catches the URL path and makes it available as a request parameter</li>
+                        <li>we use this parameter and merge it into the </li>
+                        <li>you might ask: "why merge it into the query parameters?"</li>
+                        <li>reason is: it allows us to unify how we handle </li>
+                        <li>Next.js provides a "context" to each request that contains - among other things - the query parameters for a given request</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Generating API Requests</h1>
+
+                <img class="fragment" src="./graphics/request_builder.svg" alt="" style="display: block; margin: 0 auto;">
+
+                <aside class="notes">
+                    <ul>
+                        <li>getInitialProps as the place to fetch data in Next.js (runs on browser and client)</li>
+                        <li>RequestBuilder as a central component</li>
+                        <li>basically we run the same lifecycle over and over again</li>
+                        <li>generating API-Requests based on the context Next.js provides (e.g. query params)</li>
+                        <li>determinstic and easy to test</li>
+                        <li>only secondary data that we don't need to render the initial page gets fetched in other places</li>
+                        <li>examples for this secondary data could be the basket information necessary to display a minibasket</li>
+                        <li>but mostly the components just receive props and render accordingly</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Handling User Interaction</h1>
+
+                <img class="fragment" src="./graphics/form_submit.svg" alt="" style="display: block; margin: 0 auto;">
+
+                <aside class="notes">
+                    <ul>
+                        <li>when the user interacts with the page, we generate a new URL or query parameters</li>
+                        <li>use the generated URL to perform an "internal navigation"</li>
+                        <li>"internal" means that from the perspective of the user nothing changes except for the result of his interaction</li>
+                        <li>but: the result is also a new URL that the user can share or use to restore the same state of the application later on</li>
+                        <li>again: very easy to test</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Lessons Learned</h1>
+            </section>
+
+            <section>
+                <h1>Native Browser APIs rule!</h1>
+
+                <div class="custom-events-wrapper">
+                    <figure class="fragment">
+                        <figcaption>&#x3C;Overlay /&#x3E;</figcaption>
+                        <img src="./graphics/custom_events_1.svg" alt="">
+                    </figure>
+
+                    <figure class="fragment">
+                        <figcaption>&#x3C;OtherComponent /&#x3E;</figcaption>
+                        <img src="./graphics/custom_events_2.svg" alt="">
+                    </figure>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Event-Driven across components</li>
+                        <li>therefore no need for global store library</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h1>Integrating different Frameworks is haaard</h1>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Since we implemented the new application with Next.js we thought it would be a good idea to couple the implementation with a Pattern Library</li>
+                        <li>After all, Next.js is just a supercharged React application...</li>
+                        <li>...and React is all about components</li>
+                        <li>Should be easy enough, don't you think?</li>
+                        <li>Weeeell....it turns out that's not necessary the case.</li>
+                        <li>Since we did not have any experience in this area at all, we had to try a couple of different ways on how we could make a pattern library work well our Next.js application</li>
+                        <li>The main trouble in the beginning was that we tried to implement both of them as a Mono-Repository...</li>
+                        <li>...because after all, we wanted to use the components of our pattern library straigth in the Next.js application</li>
+                        <li>It turns out: This worked fine for the components themselves, but we had a lot of trouble when it came to other aspects like where to store assets like stylesheets or images</li>
+                        <li>The reason for this is that Next.js can only serve assets located in the "static" directory of Next.js...</li>
+                        <li>...and just like Next.js has constraints like this, other frameworks - in our case the pattern library - have similar constraints...</li>
+                        <li>...so trying to use them together in a Mono-Repository did not really work out for us</li>
+                        <li>After a couple of iterations we landed on a solution that is simply 2 separate repositoies with a custom build process in the case of the pattern library that compiles all the components and packages them together with static assets....</li>
+                        <li>...this way we can just use this output in our Next.js application in a fairly painful way</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Unofficial Web Standards</h1>
+
+                <pre class="fragment language-javascript">
+                  <code class="hljs javascript language-javascript" data-trim>
+                    ?makairaFilter[color][0]=White&makairaFilter[color][1]=Violet
+                  </code>
+                </pre>
+
+                <aside class="notes">
+                    <ul>
+                        <li>So, the job I'm currently working in is my first actual job after the university</li>
+                        <li>Why am I telling you this?</li>
+                        <li>Since this is my first job I don't have alot of depp knowledge in many of the programming languages on the web because we mainly rely on PHP and JavaScript</li>
+                        <li>When I wanted to migrate this specific functionality of the "old" application it proved difficult to replicate the handling for those array values in the query params</li>
+                        <li>So for my research, I did not find any mention about some kind of "standard" when it comes to handling these exmaples of nested query params</li>
+                        <li>It actually feels like PHP somehow pushed this into web as some kind ofunofficial standard and frameworks that came after had to roll their own implementation to support this syntax</li>
+                        <li>I wanted to mention this point because it was actually new and surprising to me</li>
+                        <li>So, how did we solve this issue?</li>
+                        <li>of course, you could use your own implementation to parse the URL params in Javascript, we solved this by using a small library called "qs"</li>
+                        <li>Now, I want to note that I might have been missing something here during my researchand there might actually be way to handle these cases with node.js and express, so if i did - please come to me afterwards, but for now we have a solution that works pretty well for us</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Mind the Version Number!</h1>
+                <aside class="notes">
+                    <ul>
+                        <li>in the past I never really paid attention to the version of the packages I was using as long as they get the job done</li>
+                        <li>building our application made me realize for the first time how you can hit a wall if you are not careful about the libraries you use</li>
+                        <li>we were using a next.js-adaption of a popular React-I18n library</li>
+                        <li>the package was still pre version 1.0 and changing quite rapidly</li>
+                        <li>this caused us to experience 2 breaking changes, one of which we couldn't even debug properly because it only appeared in production and was not reproducable in any way on our local or staging machines</li>
+                        <li>in the end we decided it was not worth the trouble and developed our own application</li>
+                        <li>the result might not be as sophisticated compared to all the features the library offered</li>
+                        <li>in fact, its quite a simple solution</li>
+                        <li>but it works perfectly for us with a relativly low compexity and we have one less dependency to maintain</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1>Blog</h1>
+                <h1 style="font-family: 'Barlow Medium'">www.lost-in-technology.com</h1>
+                <aside class="notes">
+                    <ul></ul>
+                </aside>
+            </section>
+
+            <section>
+                <div class="hiring-wrapper">
+                    <h1 style="text-transform: uppercase;">We are hiring!</h1>
+                    <img class="footer__logo" src="./images/marmalade-logo-big.png" />
+                </div>
+
+                <aside class="notes">
+                    <ul></ul>
+                </aside>
+            </section>
+
+            <section>
+                <h1 style="text-transform: uppercase;">Thank <br> You</h1>
+
+                <aside class="notes">
+                    <ul></ul>
+                </aside>
+            </section>
+
+        </div>
+
+        <footer>
+            <div class="footer__logos">
+                <img class="footer__logo" src="./images/marmalade-logo.jpg" />
+                <img class="footer__logo" src="./images/makaira-logo.jpg" />
+            </div>
+            <div class="footer__personal">
+                <span class="footer__name">René Mäkeler</span>
+                <span class="footer__name">2019</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+        // More info about config & dependencies:
+        // - https://github.com/hakimel/reveal.js#configuration
+        // - https://github.com/hakimel/reveal.js#dependencies
+        Reveal.initialize({
+            dependencies: [{
+                src: 'plugin/markdown/marked.js'
+            }, {
+                src: 'plugin/markdown/markdown.js'
+            }, {
+                src: 'plugin/notes/notes.js',
+                async: true
+            }, {
+                src: 'plugin/highlight/highlight.js',
+                async: true
+            }]
+        });
+    </script>
+</body>
+
 </html>
