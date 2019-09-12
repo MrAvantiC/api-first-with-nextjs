@@ -28,6 +28,7 @@
 <body>
     <div class="reveal">
         <div class="slides">
+
             <section>
                 <h1 class="presentation-title">Replacing a legacy Frontend <br>with Next.js <br>and <br>an API-first Workflow</h1>
 
@@ -84,9 +85,9 @@
                 <h1>"Headless"</h1>
 
                 <ul>
-                    <li class="fragment">Decouple the Storefront from the Backend</li>
-                    <li class="fragment">Presentation of products in a separate Frontend application</li>
-                    <li class="fragment">State Management still in the Backend</li>
+                    <li class="fragment">Storefront is decoupled from the Backend</li>
+                    <li class="fragment">Products are presented in  a separate Frontend application</li>
+                    <li class="fragment">State Management remains in the Backend</li>
                 </ul>
 
                 <aside class="notes">
@@ -175,7 +176,7 @@
                     <li class="fragment">Application State (filtering, sorting, ...) is derived from Query Parameters</li>
                     <li class="fragment">"Request Builder" generates API requests based on the Context</li>
                     <li class="fragment">Event handlers collect Form data and use it to generate new Query Parameters</li>
-                    <li class="fragment">Navigate to the new URL (internally) generate the API request and fetch the data</li>
+                    <li class="fragment">Navigate to the new URL (internally) to generate the API request and fetch the data</li>
                 </ul>
 
                 <aside class="notes">
