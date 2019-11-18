@@ -29,16 +29,11 @@
     <div class="reveal">
         <div class="slides">
 
-            <section>
-                <h1 class="presentation-title">Replacing a legacy Frontend <br>with Next.js <br>and <br>an API-first workflow</h1>
+            <section class="black-slide">
+              <h1 class="presentation-title">Headless E-Commerce <br>with <br>React and Next.js</h1>
 
                 <aside class="notes">
                     <ul>
-                      <li>So, hello everybody! Today I want to talk about how we replaced the frontend of a legacy system with Next.js and an API-first workflow</li>
-                      <li>In the beginning we will go a bit into the architecture and design decision we made for this project....</li>
-                      <li>...I will show you how we implemented some of these decisions...</li>
-                      <li>...and we will also have a look at some of my personal lessons learned</li>
-                      <li>But first, let's start with a couple of words about me...</li>
                     </ul>
                 </aside>
             </section>
@@ -54,87 +49,131 @@
 
                 <aside class="notes">
                     <ul>
-                      <li>So, my name is René</li>
-                      <li>I work as a web developer at a company called marmalade</li>
-                      <li>at marmalade we have 2 main areas of development</li>
-                      <li>on one hand we do classic project development, which means we support our customers and their existing systems - which are mostly geared towards ecommerce</li>
-                      <li>we fix bugs, develop new features or even do entire relaunches</li>
-                      <li>on the other hand we develop our own product - which is called Makaira</li>
-                      <li>while Makaira has a lot of different features to offer, today I want to focus on how it enabled us to replace almost the entire frontend for one of our customers</li>
-                      <li>So, lets start by taking a look at how the architecture for our customers system looked so far...</li>
+                      <li>Kurzvorstellung marmalade -> Projektgeschäft vs. Produktentwicklung</li>
+                      <li>Makaira als Grundlage für die Umsetzung des Projekts</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="black-slide">
+              <h1 class="presentation-title">What is this talk about?</h1>
+            </section>
+
+            <section class="grey-slide">
+              <div class="sneak-peak-wrapper">
+                <img src="./graphics/spoco-sneak-peak-maincat.png" alt="">
+              </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>recht klassischer E-Commerce-Shop</li>
+                        <li>Listenseiten mit Filtern und Sortierung</li>
+                        <li>Content-lastige Seiten</li>
+                        <li>Sucheergebnisseiten</li>
+                        <li>...wurde entschieden, den Shop - ursprünglich ein wahrer Monolith - nun mit einem Headless-Ansatz umzusetzen</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="black-slide">
+                <h1 class="presentation-title">Headless</h1>
+
+                <aside class="notes">
+                    <ul>
+                      <li>Headless -> ursprünglich aus dem CMS-Bereich bekannt</li>
+                      <li>Begriff taucht aber auch mehr und mehr in anderen Zusammenhängen, wie Webshops, auf</li>
+                      <li>Aber was kennzeichnet "Headless Applications" überhaupt?</li>
                     </ul>
                 </aside>
             </section>
 
             <section>
-                <h1>Architecture</h1>
+                <h5>Characteristics:</h5>
+                <ul>
+                    <li class="">Storefront decoupled from Backend</li>
+                    <li class="fragment fade-opacity-in">State Management remains in the Backend</li>
+                    <li class="fragment fade-opacity-in">Communication exclusively via APIs</li>
+                </ul>
 
+                <aside class="notes">
+                    <ul>
+                      <li>Frontend -> Auslieferung erfolgt nicht mehr vom "Monolithen"</li>
+                      <li>State Management -> Erklärung (Warenkorb, Login-Status, etc)</li>
+                      <li>APIs -> kein direkter Zugriff auf Datenbanken o.ä.</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="black-slide">
+                <h1 class="presentation-title">But why?</h1>
+
+                <aside class="notes">
+                    <ul>
+                        <li></li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section>
+                <h5>Benefits:</h5>
+                <ul>
+                    <li class="">(Re-)Use data in any application</li>
+                    <li class="fragment fade-opacity-in">Gradually replace existing legacy systems</li>
+                    <li class="fragment fade-opacity-in">Change your development workflows</li>
+                </ul>
+
+                <aside class="notes">
+                    <ul>
+                      <li>Marketing-Opportunities vs. Technology vs. Workflows change</li>
+                      <li>Ausschließlich APIs -> Multi-Channel- Marketing aus einer Datenquelle</li>
+                    </ul>
+                </aside>
+            </section>
+
+<section class="black-slide">
+                <h1 class="presentation-title">Architecture</h1>
+
+                <aside class="notes">
+                    <ul>
+                        <li></li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="white-slide">
                 <div class="architecture-wrapper">
-                    <img class="fragment" src="./graphics/architecture_old_fragment_1.svg" alt="">
+                    <img class="" src="./graphics/architecture_old_fragment_1.svg" alt="">
                     <img class="fragment" src="./graphics/architecture_old_fragment_2.svg" alt="">
                     <img class="fragment" src="./graphics/architecture_old_fragment_3.svg" alt="">
                 </div>
 
                 <aside class="notes">
                     <ul>
-                        <li>...like I said, most of our customers have some kind of ecommerce system</li>
-                        <li>in this case, we are looking at a shop system called "OXID"</li>
-                        <li>for reasons of reliability and scalability, the shop is replicated on a couple of application servers...</li>
-                        <li>...and a load balancer distributes the incoming traffic to those servers</li>
-                        <li>initially, the shop took care of everything: presentation of product lists, product detail pages, displaying search results and of course the checkout</li>
-                        <li>Now, OXID itself has a very naive implementation when it comes to searching across your products...</li>
-                        <li>...also, it does not offer any way to filter search results or products lists by default...</li>
-                        <li>...so, this is actually how our product development came to life.</li>
-                        <li>With Makaira, we import all the product data into an ElasticSearch instance</li>
-                        <li>Not only does this offer a nice search performance even at a point where searching becomes really slow and inefficient on a relational database like MySQL...</li>
-                        <li>...but it also allows us to - more or less quite easily - implement further functionalities like analyzing and steming our data, fuzzy searching or filtering products based on given criteries</li>
-                        <li>Therefore, Makaira adds an additonal layer to our architecture with ElasticSearch backing all the search and filter functionalities</li>
-                        <li>So, after we had done all this, we were thinking "since we have access to all the product and category data now anyway, what else can we use that for?"</li>
-                        <li>...and it turns out: we can do alot of things - but today we are going to focus on just one of these...</li>
+                      <li>OXID-Drawbacks (naive Suche, Filterung)</li>
+                      <li>ES-Features -> Analyzing, Stemming, fuzzy searching usw.</li>
+                      <li>Was noch tun mit den Daten?</li>
                     </ul>
                 </aside>
             </section>
 
-            <section>
-                <h1>"Headless"</h1>
-
-                <ul>
-                    <li class="fragment">Storefront is decoupled from the Backend and presents the products</li>
-                    <li class="fragment">State Management remains in the Backend</li>
-                </ul>
+        <section class="black-slide">
+                <h1 class="presentation-title">Concept #1</h1>
+                <h1 class="presentation-title">API-First Workflow</h1>
 
                 <aside class="notes">
                     <ul>
-                        <li>So, in the past couple of years there has been more and more talk about the term "Headless"</li>
-                        <li>as to my experience, in the beginning when people were talking about "headless" it was mostly related to content management systems</li>
-                        <li>now, with access to all the data that we need to present the products of our shop, we decided to replace the frontend of OXID with a decoupled application</li>
-                        <li>this application gets its data directly out of ElasticSearch and only uses the shop system for state managemt</li>
-                        <li>Now, What do I mean by state management?...</li>
-                        <li>...well, actually this refers mostly to handling basket information and login states </li>
-                        <li>So, we started replacing the legacy shop by implementing a new frontend application with Next.js</li>
-                        <li>For those of you who have not heard of it before: Next.js is a framework based on React.js that provides Server-Side-Rendering out-of-the-box</li>
-                        <li>One very important goal of the project was that this concept should be applicable to any kind of shop, not just this one specific customer</li>
-                        <li>The consequence of this is that we implemented the new frontend using an "API-first approach"</li>
+                        <li></li>
                     </ul>
                 </aside>
             </section>
 
-            <section>
-                <h1>What does "API-first workflow" even mean?</h1>
+<section>
+                <h5>In Theory:</h5>
+                <ul>
 
-                <aside class="notes">
-                  <ul>
-                        <li>So, let's talk about what "API-first approach" even means....</li>
-                    </ul>
-                </aside>
-            </section>
-
-            <section>
-                <h1>API-first - In Theory</h1>
-                <ul style="min-height: 270px">
-                    <li class="fragment">Frontend has no knowledge about URL structures</li>
-                    <li class="fragment">API provides information related to a given URL</li>
-                    <li class="fragment">Frontend decides what kind of page to render based on the API response</li>
+                    <li class="">Frontend has no knowledge about URL structures</li>
+                    <li class="fragment fade-opacity-in">API provides information related to a given URL (content, products, etc.)</li>
+                    <li class="fragment fade-opacity-in">Frontend decides what kind of page to render based on the API response</li>
                 </ul>
 
                 <aside class="notes">
@@ -148,11 +187,16 @@
                 </aside>
             </section>
 
-            <section>
-                <h1>API-first - In Pratice</h1>
+            <section class="white-slide">
+              <h5>In Practice:</h5>
 
                 <div class="api-first-wrapper">
                     <img class="fragment" src="./graphics/api_first_success.svg" alt="">
+                </div>
+
+                <h5 class="fragment">Unknown URLs:</h5>
+                <div class="api-first-wrapper api-first-wrapper--unknown">
+                    <img class="fragment" src="./graphics/api_first_failure.svg" alt="">
                 </div>
 
                 <aside class="notes">
@@ -163,19 +207,6 @@
                         <li>Makaira in turn looks up the URL in ElasticSearch, prepares the result if necessary and sends the response back to the Next.js application</li>
                         <li>based on that response, Next.js can now decide what kind of page to render under the given URL</li>
                         <li>So, that illustrates the successful case ...but since we do not replace all the pages of the shop, there are still URLs that need to be handled by the legacy system ...how do we achieve that split?</li>
-                    </ul>
-                </aside>
-            </section>
-
-            <section>
-                <h1>Unknown URLs</h1>
-
-                <div class="api-first-wrapper">
-                    <img class="fragment" src="./graphics/api_first_failure.svg" alt="">
-                </div>
-
-                <aside class="notes">
-                    <ul>
                         <li>Well, for unknown URLs the workflow looks pretty much the same</li>
                         <li>the difference here is that Makaira will respond with a 404 status code if no result was found for the given URL</li>
                         <li>this signals to the next.js application that the URL is supposed to be handled by the legacy system</li>
@@ -186,76 +217,52 @@
                 </aside>
             </section>
 
-            <section>
-                <h1>The Migration Process</h1>
+            <section class="black-slide">
+                <h1 class="presentation-title">Concept #2</h1>
+                <h1 class="presentation-title">URL-driven Frontend</h1>
 
-                <ul>
-                    <li>Traffic gets routed against the Next.js server first</li>
-                    <li>"Feature Flag": Next.js returns a non-200 status code, the load balancer falls back to the legacy system</li>
-                    <li>enables Page-by-Page or Type-by-Type migration to the new Frontend application</li>
-                </ul>
-
-                <aside class="notes">
+              <aside class="notes">
                     <ul>
-                        <li>...the reason is that this failover mechanism can also be used as a feature flag</li>
-                        <li>we achieved this by whitelisting specific URLs in the beginning and then filtering the API-Response from Makaira and returning a 404 from the Next.js application if a given URL was not whitelisted</li>
-                        <li>We made use of this to go live with only a couple of selected pages at first while the rest of the pages were still handled by the legacy system</li>
-                        <li>This allowed us to monitor aspects like performance or SEO-impact in a more limited scope compared to making the switch to the new system for the whole shop at once</li>
-                        <li>So much for the concept of an API-first workflow ....next I want to talk about another concept we made use of called "URL-driven"</li>
+                      <li>URL-driven -> kein neues Konzept, aber in SPAs manchmal nicht beachtet</li>
                     </ul>
                 </aside>
             </section>
 
             <section>
-                <h1>URL-driven</h1>
+                <h5>URL-driven:</h5>
                 <ul>
-                    <li class="fragment">Application State (filtering, sorting, ...) is derived from Query Parameters</li>
-                    <li class="fragment">"Request Builder" generates API requests based on the Context</li>
-                    <li class="fragment">Event handlers collect Form data and use it to generate new Query Parameters</li>
-                    <li class="fragment">Navigate to the new URL (internally) to generate the API request and fetch the data</li>
+                  <li class=""><b>Application state</b> (filtering, sorting, ...) is derived from query parameters</li>
+                    <li class="fragment fade-opacity-in"><b>Request Builder</b> generates API requests based on the Context</li>
+                    <li class="fragment fade-opacity-in"><b>User interactions</b> generate new query parameters</li>
+                    <li class="fragment fade-opacity-in">Navigate to the new URL to generate a new API request and fetch data</li>
+                    <li class="fragment fade-opacity-in">Navigation happens internally, unnoticable for the user</li>
                 </ul>
 
                 <aside class="notes">
                     <ul>
-                        <li>So, "URL-driven" is not a new concept at all, but one that sometimes gets overlooked in the age of single page applications ...atleast that's my feeling</li>
-                        <li>We designed the Next.js frontend to be URL-driven, but what does that mean exactly?</li>
-                        <li>Well, it means that the state of the application - what products are shown, what filters are selected and so one - are all dervied from parameters in the URL</li>
-                        <li>Now, because all the necessary information is encoded in the URL, we can go through the same lifecycle for every request, no matter if it happens on the server or on the client...</li>
-                        <li>In that lifecylce, one of the most central components in our application - the so called "Request Builder" takes the "Context" that Next.js provides to each request</li>
-                        <li>this "Context" contains - among other things - the query parameters for a given request</li>
-                        <li>the Request Builder then uses this context to generate a new API request which includes all the information necessary to render the right result, for example what sorting the user selected or what filters are active</li>
-                        <li>the same principle applies to how we handle user interaction:</li>
-                        <li>when a user interacts with the page, the event handlers then collect Form Data and use it to generate new query parameters</li>
-                        <li>then, we can construct a new URL that describes the current state of the application, route to it and start the same lifecycle over again, where the Request Builder generates an API-Request, fetches the data and uses the data to update the components on the page</li>
-                        <li>Now, how does this look like in Next.js?</li>
+                      <li>Request Builder -> erzeugt API-Requests aus gegebenen Informationen (query params)</li>
+                      <li>Next.js -> Context mit Query params etc</li>
+                      <li>User Interaction -> generiert neue URL mit query params -> immer den gleichen Zyklus</li>
                     </ul>
                 </aside>
             </section>
 
-            <section>
-                <h1>Implementation in Next.js</h1>
+
+            <section class="black-slide">
+                <h1 class="presentation-title">Implementation in Next.js</h1>
             </section>
 
             <section>
                 <h1>One Route to rule them all</h1>
 
-                <img class="fragment" src="./graphics/express_route.svg" alt="" style="display: block; margin: 0 auto;">
+                <img class="" src="./graphics/express_route.svg" alt="" style="display: block; margin: 0 auto;">
 
                 <aside class="notes">
                     <ul>
-                        <li>So, Next.js for one offers file-based routing</li>
-                        <li>In this case, your directory structure represents your available routes</li>
-                        <li>You have a "pages/" directory where you can put files with JavaScript components and Next.js renders those components</li>
-                        <li>But: you can also configure a custom routing...</li>
-                        <li>...to do that on the server-side, Next.js uses an Express server which you can use for your route definitions</li>
-                        <li>In our case: this boils down to just one route...</li>
-                        <li>Since the frontend has no knowledge about the url structure of the application, we can get a away with this kind of "catch all" route</li>
-                        <li>the route definition catches the URL path and makes it available as a request parameter</li>
-                        <li>we use this parameter and merge it into the existing query parameters</li>
-                        <li>you might ask: "why merge it into the existing query parameters?"</li>
-                        <li>the reason for that is: it allows us to unify how we handle the data fetching on both the server and the client...</li>
-                        <li>...and if you remember - on the previous slide I told you how we always enter the same lifecycle to fetch data for a URL</li>
-                        <li>Let's see what that looks like...</li>
+                      <li>Next.js -> datei-basiertes Routing ("pages" directory)</li>
+                      <li>Alternativ: custom routing via Express-Server</li>
+                      <li>"Catch-All"-Route mit zusätzlichem Parameter aus Regex</li>
+                      <li>die Informationen werden anschließend zum Erzeugen eines API-Requests verwendet</li>
                     </ul>
                 </aside>
             </section>
@@ -263,18 +270,15 @@
             <section>
                 <h1>Generating API Requests</h1>
 
-                <img class="fragment" src="./graphics/request_builder.svg" alt="" style="display: block; margin: 0 auto; position: relative; top: -20px;">
+                <img class="" src="./graphics/request_builder.svg" alt="" style="display: block; margin: 0 auto; position: relative; top: -20px;">
 
                 <aside class="notes">
                     <ul>
-                        <li>So, in Next.js, a hook called "getInitialProps" is the where you fetch your data if you want it to be fetched no matter if the rendering happens on the browser or the client</li>
-                        <li>other lifecycle hooks like "componentDidMount" can still be used for data fetching, but these only run inside the browser</li>
-                        <li>in our case, we only fetch secondary data like information needed to render a minibasket in componentDidMount, but for the most part our Components just receive props provided by the API-Request and render accordingly</li>
-                        <li>as you could see before, we made the URL available as an additional query parameter</li>
-                        <li>now, we can use this to extract the current URL out of the context of the current request - no matter if it happens on the server or the client side</li>
-                        <li>then, we create a new instance of our Request Builder component and pass it the current context</li>
-                        <li>the Request Builder can then be used to get the configuration needed for the API-Request</li>
-                        <li>the really nice part about this design is that it is pretty much deterministic about where and how the data is fetched and therefore easy to test, especially the Request Builder itself</li>
+                      <li>"getInitialProps" -> Erklärung (Verweis auf "componentDidMount")</li>
+                      <li>URL ist jetzt verfügbar als zusätzlicher Query param</li>
+                      <li>Request Builder bekommt Next.js-Context und generiert Request-Konfiguration</li>
+                      <li>Deterministischer Workflow -> leicht zu testen, v.a. der Request Builder</li>
+                      <li>Sekundäre Daten (z.B. Warenkorb-Infos) aus Performance-Gründen erst auf dem Client</li>
                     </ul>
                 </aside>
             </section>
@@ -282,33 +286,42 @@
             <section>
                 <h1>Handling User Interaction</h1>
 
-                <img class="fragment" src="./graphics/form_submit.svg" alt="" style="display: block; margin: 0 auto;">
+                <img class="" src="./graphics/form_submit.svg" alt="" style="display: block; margin: 0 auto;">
 
                 <aside class="notes">
                     <ul>
-                        <li>Now, when a user interacts with the page, we want use the same mechanism again</li>
-                        <li>to achieve that, we react to user interaction - for example if a user wants to change the sorting of a productlist - by collecting the forms on the current page</li>
-                        <li>we use this FormData and pass it into helper functions which in turn output a specific query parameter</li>
-                        <li>when this is done for all the forms on the page, we generate a new URL</li>
-                        <li>the URL will be used for an "internal navigation" - which you can see in the last 3 lines with the "Router.push" call -...this means that we don't visible reload the page - at least for the user it doesn't feel like a page reload</li>
-                        <li>But the call of "Router.push" provides a couple of benefits:</li>
-                        <li>first it executes the "getInitialProps" hooks again which - if you recall - is responsible for fetching the data</li>
-                        <li>the second benefit is that it automatically adds a new entry to the browser history...</li>
-                        <li>...and by generating new URLs with every interaction, it makes it very easy for users to share the view of the application they just see with other users by simply sharing the current URL</li>
-                        <li>another benefit is that the query parameters are generated by small functions that take in FormData and always return the same result for the same FormData-Input</li>
-                        <li>if you are familiar with testing, you realize that to a large extent the definition of "pure functions" ...and therefore these helper functions are quite easy to test</li>
+                        <li>Nutzung des selben Mechanismus für User-Interaction</li>
+                        <li>"Router.push" -> triggert getInitialProps</li>
+                        <li>URL kann einfach geteilt werden</li>
+                        <li>functions -> same input = same result -> pure functions</li>
                     </ul>
                 </aside>
             </section>
 
-            <section>
-                <h1>Lessons Learned</h1>
+            <section class="black-slide">
+                <h1 class="presentation-title">The Migration Process</h1>
+            </section>
 
-              <aside class="notes">
+            <section>
+              <h5>Gradual Migration:</h5>
+
+                <ol>
+                  <li class="">Traffic gets routed to the Next.js server first</li>
+                  <li class="fragment fade-opacity-in"><b>Feature Flag</b> - Next.js returns a non-200 status code, the load balancer falls back to the legacy system</li>
+                    <li class="fragment fade-opacity-in">Enables <b>Page-by-Page</b> or <b>Type-by-Type</b> migration to the new Frontend application</li>
+                </ol>
+
+                <aside class="notes">
                     <ul>
-                        <li>To conclude the presentation, I quickly want to share some of my lessons learned during this project</li>
+                        <li>Failover als Feature-Flag</li>
+                        <li>URl-Whitelist</li>
+                        <li>erlaubt Monitoring von Performance oder SEO in einem eingegrenzten Rahmen</li>
                     </ul>
                 </aside>
+            </section>
+
+<section class="black-slide">
+                <h1 class="presentation-title">Lessons learned</h1>
             </section>
 
             <section>
@@ -328,39 +341,25 @@
 
                 <aside class="notes">
                     <ul>
-                        <li>The first lesson that I learned - again - is that browser APIs are pretty powerful today</li>
-                        <li>Now, handling global state is always a hot topic in the React community</li>
-                        <li>In our project we had no need for a complex solution like Redux or MobX, but we still needed components to react to other components</li>
-                        <li>a simple example for that would be the click on an overlay, which - depending on the current application state - should for example hide another component</li>
-                        <li>to achieve this we made use of native APIs like custom Events</li>
-                        <li>in this case, a single component - in our example the overlay - dispatches a specific event</li>
-                        <li>other components can then register their own event listeners and react accordingly when an event is fired</li>
-                        <li>these custom Events allow for event-driven interaction across components without the need of a global data store</li>
+                        <li>State-Management als Hot-Topic</li>
+                        <li>kein Bedarf an komplexen Lösungen wie Redux oder Mobx</li>
+                        <li>Aber: Bedarf an "Cross-Component-Communication"</li>
+                        <li>Lösung: Custom Events -> Komponenten sind selbstverantwortlich</li>
                     </ul>
                 </aside>
             </section>
 
             <section>
                 <h1>Integrating different Frameworks is haaard</h1>
+                <h1 class="fragment">(...still evolving...)</h1>
 
                 <aside class="notes">
                     <ul>
-                        <li>Another lesson learned is that integrating different frameworks with each other can be very hard</li>
-                        <li>Since we implemented the new application with Next.js we thought it would be a good idea to couple this implementation with a Pattern Library</li>
-                        <li>After all, Next.js is just a supercharged React application...</li>
-                        <li>...and React is all about components...</li>
-                        <li>...Should be easy enough, don't you think?</li>
-                        <li>Weeeell....it turns out that's not necessary the case.</li>
-                        <li>Since we did not have any experience in this area at all, we had to try a couple of different ways on how we could make a pattern library work well our Next.js application</li>
-                        <li>The main trouble in the beginning was that we tried to implement both of them - Next.js and the Pattern Library - in a single Repository...</li>
-                        <li>...because after all, we wanted just to use the components of our pattern library straigth in the Next.js application</li>
-                        <li>It turns out: This worked fine for the components themselves, but we had a lot of trouble when it came to other aspects like where to store assets like stylesheets or images</li>
-                        <li>The reason for this is that Next.js can only serve assets located in a specific directory called "static"</li>
-                        <li>...and just like Next.js has constraints like this, other frameworks - in our case the pattern library - have similar constraints...</li>
-                        <li>...so trying to use them together in a Mono-Repository did not really work out for us</li>
-                        <li>After a couple of iterations we landed on a solution that is simply 2 separate repositories with a custom build process in the case of the pattern library </li>
-                        <li>the build process compiles all the components and packages them together with static assets....</li>
-                        <li>...this way we can just use this output in our Next.js application without any of the pain we experiened before</li>
+                        <li>Pattern-Library + Next.js = The dream?</li>
+                        <li>Components -> super</li>
+                        <li>Styles+Bilder+andere Assets -> eher nicht so gt</li>
+                        <li>Constraints der verschiedenen Frameworks (z.B. "static"-directory in Next.js)</li>
+                        <li>Verschiedene Ansätze: Mono-Repo vs. geteilte Repos</li>
                     </ul>
                 </aside>
             </section>
@@ -447,16 +446,16 @@
 
         </div>
 
-        <footer>
-            <div class="footer__logos">
-                <img class="footer__logo" src="./images/marmalade-logo.jpg" />
-                <img class="footer__logo" src="./images/makaira-logo.jpg" />
-            </div>
-            <div class="footer__personal">
-                <span class="footer__name">René Mäkeler</span>
-                <span class="footer__name">2019</span>
-            </div>
-        </footer>
+        <!-- <footer> -->
+            <!-- <div class="footer__logos"> -->
+                <!-- <img class="footer__logo" src="./images/marmalade-logo.jpg" /> -->
+                <!-- <img class="footer__logo" src="./images/makaira-logo.jpg" /> -->
+            <!-- </div> -->
+            <!-- <div class="footer__personal"> -->
+                <!-- <span class="footer__name">René Mäkeler</span> -->
+                <!-- <span class="footer__name">2019</span> -->
+            <!-- </div> -->
+        <!-- </footer> -->
     </div>
 
     <script src="js/reveal.js"></script>
